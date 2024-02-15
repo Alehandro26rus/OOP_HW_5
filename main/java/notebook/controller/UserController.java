@@ -6,17 +6,21 @@ import notebook.model.repository.GBRepository;
 import java.util.List;
 import java.util.Objects;
 
+import notebook.util.DataEntry;
+
+
 public class UserController {
     private final GBRepository repository;
+    private final DataEntry input;
 
     public UserController(GBRepository repository) {
         this.repository = repository;
+        this.input = new DataEntry();
     }
 
     public void saveUser(User user) {
         repository.create(user);
     }
-    public void saveUsers(List<User> users) {repository.addMultipleUsers(users);}
 
     public User readUser(Long userId) throws Exception {
         List<User> users = repository.findAll();
@@ -26,19 +30,30 @@ public class UserController {
             }
         }
 
-        throw new RuntimeException("Запись не найдена");
+        throw new RuntimeException("User not found");
     }
-//    public List<String> readAll() {
-//        return repository.readAll();
-//    }
 
     public void updateUser(String userId, User update) {
         update.setId(Long.parseLong(userId));
         repository.update(Long.parseLong(userId), update);
     }
 
-    public void deleteUser(Long userId) {
-        repository.deleteUser(Long.parseLong(String.valueOf(userId)));
+    public void deleteUser(String id) {
+        repository.delete(Long.parseLong(id));
+    }
+
+    // public User createUser() {
+    //     String firstName = input.prompt("Имя: ");
+    //     String lastName = input.prompt("Фамилия: ");
+    //     String phone = input.prompt("Номер телефона: ");
+    //     return new User(firstName, lastName, phone);
+    // }
+
+    public User createUser() {
+        String firstName = input.prompt("Имя: ");
+        String lastName = input.prompt("Фамилия: ");
+        String phone = input.prompt("Номер телефона: ");
+        return repository.create(new User(firstName, lastName, phone));
     }
 
     public List<User> readAll() {
